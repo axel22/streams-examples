@@ -1,4 +1,4 @@
-package example;
+package org.sample;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,6 +42,15 @@ public class Streams {
   }
 
   @Benchmark
+  public double parMapReduce() {
+    return Arrays.stream(values).parallel()
+      .map(x -> x + 1)
+      .map(x -> x * 2)
+      .map(x -> x + 5)
+      .reduce(0, Double::sum);
+  }
+
+  @Benchmark
   public double averageAgeOfHighAdultsWithLongHair() {
     return Person.analyzePeople(people, 170, 18);
   }
@@ -52,6 +61,11 @@ public class Streams {
       .map(p -> new Person(Hairstyle.LONG, p.getAge(), p.getHeight()))
       .filter(p -> p.getHeight() > 198)
       .toArray(Person[]::new);
+  }
+
+  @Benchmark
+  public int scrabble() {
+    return JavaScrabble.run();
   }
 }
 
@@ -94,7 +108,7 @@ class Person {
     Person[] people = new Person[total];
     for (int i = 0; i < total; i++) {
       people[i] = new Person(
-        random.nextDouble() > LONG_RATIO ? Hairstyle.LONG : Hairstyle.SHORT,
+        random.nextDouble() < LONG_RATIO ? Hairstyle.LONG : Hairstyle.SHORT,
         (int)(random.nextDouble() * MAX_HEIGHT),
         (int)(random.nextDouble() * MAX_AGE));
     }
