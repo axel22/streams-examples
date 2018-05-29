@@ -51,16 +51,29 @@ public class Streams {
   }
 
   @Benchmark
-  public double averageAgeOfHighAdultsWithLongHair() {
-    return Person.analyzePeople(people, 170, 18);
+  public double shortHairYoungsterHeight() {
+    double averageAge = Arrays.stream(people)
+      .filter(p -> p.getHair() == Hairstyle.SHORT)
+      .mapToInt(p -> p.getAge())
+      .average().getAsDouble();
+    return Arrays.stream(people)
+      .filter(p -> p.getHair() == Hairstyle.SHORT)
+      .filter(p -> p.getAge() < averageAge)
+      .mapToInt(Person::getHeight)
+      .average()
+      .orElse(0.0);
   }
 
   @Benchmark
-  public Person[] noHaircutVolleyball() {
-    return Arrays.stream(people)
-      .map(p -> new Person(Hairstyle.LONG, p.getAge(), p.getHeight()))
-      .filter(p -> p.getHeight() > 198)
+  public double noHaircutVolleyball() {
+    Person[] tallPeople = Arrays.stream(people)
+      .map(p -> new Person(Hairstyle.LONG, p.getAge() + 1, p.getHeight()))
+      .filter(p -> p.getHeight() > 168)
       .toArray(Person[]::new);
+    return Arrays.stream(tallPeople)
+      .filter(p -> p.getAge() < 40)
+      .mapToInt(p -> p.getHeight())
+      .average().getAsDouble();
   }
 
   @Benchmark
@@ -109,19 +122,9 @@ class Person {
     for (int i = 0; i < total; i++) {
       people[i] = new Person(
         random.nextDouble() < LONG_RATIO ? Hairstyle.LONG : Hairstyle.SHORT,
-        (int)(random.nextDouble() * MAX_HEIGHT),
-        (int)(random.nextDouble() * MAX_AGE));
+        (int)(random.nextDouble() * MAX_AGE),
+        (int)(random.nextDouble() * MAX_HEIGHT));
     }
     return people;
-  }
-
-  public static double analyzePeople(Person[] people, int minHeight, int minAge) {
-    return Arrays.stream(people)
-      .filter(p -> p.getHair() == Hairstyle.SHORT)
-      .filter(p -> p.getHeight() > minHeight)
-      .mapToInt(Person::getAge)
-      .filter(age -> age > minAge)
-      .average()
-      .orElse(0.0);
   }
 }
