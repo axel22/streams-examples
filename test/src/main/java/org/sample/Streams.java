@@ -66,12 +66,10 @@ public class Streams {
 
   @Benchmark
   public double noHaircutVolleyball() {
-    Person[] tallPeople = Arrays.stream(people)
+    return Arrays.stream(people)
       .map(p -> new Person(Hairstyle.LONG, p.getAge() + 1, p.getHeight()))
       .filter(p -> p.getHeight() > 198)
       .filter(p -> p.getAge() >= 18 && p.getAge() <= 21)
-      .toArray(Person[]::new);
-    return Arrays.stream(tallPeople)
       .mapToInt(p -> p.getHeight())
       .average().getAsDouble();
   }
