@@ -65,7 +65,7 @@ public class Streams {
   }
 
   @Benchmark
-  public double noHaircutVolleyball() {
+  public double volleyballStars() {
     return Arrays.stream(people)
       .map(p -> new Person(Hairstyle.LONG, p.getAge() + 1, p.getHeight()))
       .filter(p -> p.getHeight() > 198)
