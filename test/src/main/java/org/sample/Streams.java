@@ -8,7 +8,7 @@ import org.openjdk.jmh.annotations.*;
 
 @State(Scope.Benchmark)
 public class Streams {
-  private double[] values = new double[2000000];
+  private double[] values = new double[20000];
   private double[] numbers = new double[1000];
   private Person[] people = Person.generatePeople(10000);
 
@@ -25,6 +25,16 @@ public class Streams {
       .map(x -> x * 2)
       .map(x -> x + 5)
       .reduce(0, Double::sum);
+  }
+
+  @Benchmark
+  public double iterativeMapReduce() {
+    double sum = 0.0;
+    for (int i = 0; i < values.length; i++) {
+      double x = values[i];
+      sum += (x + 1) * 2 + 5;
+    }
+    return sum;
   }
 
   public static double computeStandardDeviation(double[] numbers) {
